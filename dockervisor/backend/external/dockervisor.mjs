@@ -148,7 +148,7 @@ export default {
                 throw new Error("Deployment is not set-up");
 
             // Execute a docker-compose down (stop) command to stop the services
-            return execute(`cd ${deploy}; docker-compose down --timeout 10`);
+            return execute(`cd ${deploy}; docker-compose down --timeout 2`);
         },
         parameters: validators
     },
@@ -159,7 +159,7 @@ export default {
                 throw new Error("Deployment is not set-up");
 
             // Execute a docker-compose down (stop) command with the volumes parameter to destroy the volumes and the services
-            return execute(`cd ${deploy}; docker-compose down --volumes --remove-orphans --timeout 5`);
+            return execute(`cd ${deploy}; docker-compose down --volumes --remove-orphans --timeout 2`);
         },
         parameters: validators
     }
