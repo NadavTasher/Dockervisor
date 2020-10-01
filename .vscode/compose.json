@@ -6,9 +6,18 @@
       "ports": [
         "8000:80"
       ],
+      "volumes": [
+        "/var/run/docker.sock:/var/run/docker.sock",
+        "dockervisor:/dockervisor"
+      ],
       "environment": [
-        "password=Hello"
-      ]
+        "PASSWORD=Dockervisor",
+        "REPOSITORY=NadavTasher/Dockervisor-Test"
+      ],
+      "privileged": true
     }
+  },
+  "volumes": {
+    "dockervisor": null
   }
 }
