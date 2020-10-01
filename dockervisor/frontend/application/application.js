@@ -27,32 +27,33 @@ class Dockervisor {
         Dockervisor.call("access").then(
             () => {
                 // Check deployment setup
-                Dockervisor.call("deploymentStatus").then(
-                    () => {
-                        Dockervisor.dashboard();
+                Dockervisor.call("deploymentExists").then(
+                    (exists) => {
+                        if (exists) {
+                            // Refresh dashboard
+                            Dockervisor.dashboard();
+                        } else {
+                            // Show loading overlay
+                            Dockervisor.showLoading("Preparing setup...");
+
+                            // Request deploy key
+                            API.call("dockervisor", "deploymentKey", {
+                                password: localStorage.password
+                            }).then(
+                                (deployKey) => {
+                                    // Write deploy key to copyable UI element
+                                    UI.write("key", deployKey);
+
+                                    // Change application page
+                                    UI.view("setup");
+
+                                    // Hide loading overlay
+                                    Dockervisor.hideLoading();
+                                }
+                            ).catch(alert);
+                        }
                     }
-                ).catch(
-                    () => {
-                        // Show loading overlay
-                        Dockervisor.showLoading("Preparing setup...");
-
-                        // Request deploy key
-                        API.call("dockervisor", "deploymentKey", {
-                            password: localStorage.password
-                        }).then(
-                            (deployKey) => {
-                                // Write deploy key to copyable UI element
-                                UI.write("key", deployKey);
-
-                                // Change application page
-                                UI.view("setup");
-
-                                // Hide loading overlay
-                                Dockervisor.hideLoading();
-                            }
-                        ).catch(alert);
-                    }
-                );
+                ).catch(alert);
             }
         ).catch(
             () => {
@@ -78,7 +79,12 @@ class Dockervisor {
                 // Hide loading overlay
                 Dockervisor.hideLoading();
             }
-        ).catch(alert);
+        ).catch(
+            () => {
+                // Write error to output
+                UI.write("output", "Error");
+            }
+        );
 
         // Request deployment log
         Dockervisor.call("deploymentLog").then(
@@ -89,7 +95,12 @@ class Dockervisor {
                 // Hide loading overlay
                 Dockervisor.hideLoading();
             }
-        ).catch(alert);
+        ).catch(
+            () => {
+                // Write error to log
+                UI.write("output", "Unable to read log");
+            }
+        );
 
         // Change application page
         UI.view("dashboard");
