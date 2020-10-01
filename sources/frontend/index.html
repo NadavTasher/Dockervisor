@@ -16,7 +16,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, minimal-ui" />
 
       <!-- Mobile -->
-      <meta name="theme-color" content="#FFFFFF" />
+      <meta name="theme-color" content="#D0D0D0" />
       <meta name="mobile-web-app-capable" content="yes">
 
       <!-- Mobile Safari -->
@@ -53,20 +53,62 @@
 </head>
 
 <body column>
+      <!-- Regular pages -->
+      <div>
+            <!-- Dashboard page -->
+            <div id="dashboard" hidden>
+                  <!-- Title -->
+                  <p large left>Dockervisor: Dashboard</p>
+                  <!-- Deployment status -->
+                  <p tiny left>Deployment status:</p>
+                  <p small center id="dashboard-status">Loading...</p>
+                  <!-- Buttons -->
+                  <p tiny left>Execute actions:</p>
+                  <div row>
+                        <button>Up</button>
+                        <button>Down</button>
+                  </div>
+                  <div row>
+                        <button>Update</button>
+                        <button>Restart</button>
+                  </div>
+                  <!-- Refresh countdown -->
+                  <p tiny right id="dashboard-countdown">Loading...</p>
+            </div>
+            <!-- Password page -->
+            <div id="password" hidden>
+                  <!-- Title -->
+                  <p large left>Dockervisor: Password</p>
+                  <!-- Description -->
+                  <p tiny left>Please provide the password you selected when you deployed Dockervisor.</p>
+                  <!-- Inputs -->
+                  <input left small id="password-input" type="password" placeholder="Password" />
+                  <!-- Continue button -->
+                  <button small right onclick="Dockervisor.checkPassword();">Continue</button>
+            </div>
+            <!-- Setup page -->
+            <div id="setup" hidden>
+                  <!-- Title -->
+                  <p large left>Dockervisor: Setup</p>
+                  <!-- Description -->
+                  <p tiny left>Please follow the instructions to complete the setup.</p>
+                  <!-- SSH deploy key -->
+                  <p tiny left>Add this SSH key as a new deploy key in your GitHub repository.</p>
+                  <textarea button tiny left id="setup-key" style="height: 15vh;" readonly></textarea>
+                  <!-- GitHub repository name -->
+                  <p tiny left>Please provide your GitHub repository name.</p>
+                  <div row>
+                        <input small center id="setup-user" placeholder="GitHub User" />
+                        <input small center id="setup-name" placeholder="Repository Name" />
+                  </div>
+                  <!-- Continue button -->
+                  <button small right onclick="Dockervisor.repositorySetup();">Continue</button>
+            </div>
+      </div>
       <!-- Loading page -->
       <div id="loading">
             <div id="loading-spinner"></div>
             <p medium center id="loading-text">Loading...</p>
-      </div>
-      <!-- Home page -->
-      <div id="home" hidden>
-
-      </div>
-      <!-- Setup page -->
-      <div id="setup" hidden>
-            <p large left>Dockervisor: Setup</p>
-            <p tiny left>Please provide the required information to complete the setup.</p>
-
       </div>
 </body>
 

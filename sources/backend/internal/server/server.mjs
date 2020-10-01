@@ -171,7 +171,7 @@ export default class Server {
             let object = JSON.parse(data);
 
             // Make sure the object is of type object
-            if (typeof object !== "object" || Array.isArray(object))
+            if (!Validator.valid(object, "object"))
                 throw new Error(`Invalid request body type`);
 
             // Append to parameters
@@ -197,31 +197,20 @@ export default class Server {
      * @return {Promise<*>} Result
      */
     async #route(route, action, parameters) {
-        // Initialize the search object
-        let object = this.#routes;
-
-        // Make sure the route exists
-        if (!(route in object))
-            throw new Error(`Route "${route}" does not exist`);
-
-        // Change object context
-        object = object[route];
-
-        // Make sure the action exists
-        if (!(action in object))
-            throw new Error(`Action "${action}" does not exist`);
-
-        // Change object context
-        object = object[action];
-
-        // Make sure the object has the correct structure
-        if (!(object.hasOwnProperty("handler") && object.hasOwnProperty("parameters")))
-            throw new Error(`Action "${action}" is malformed`);
+        // Make sure the routes adhere to the validation scheme
+        if (!Validator.valid(this.#routes, {
+            [route]: {
+                [action]: {
+                    handler: "function",
+                    parameters: "object"
+                }
+            }
+        })) throw new Error(`Requested route is invalid`);
 
         // Make sure the parameters object adheres to the parameters scheme
-        Validator.validate(parameters, object.parameters);
+        Validator.validate(parameters, this.#routes[route][action].parameters);
 
         // Execute the handler
-        return object.handler(parameters);
+        return this.#routes[route][action].handler(parameters);
     }
 }

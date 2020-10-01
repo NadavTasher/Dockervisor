@@ -1,5 +1,5 @@
 :root {
-    --theme: #FFFFFF;
+    --theme: #D0D0D0;
     --passive: #333344;
     --active: #777788;
     --coaster: #DDDDEE;
@@ -14,7 +14,18 @@ body {
     font-family: "Source Code Pro", monospace !important;
 }
 
-/* Loading spinner */
+/* Loading page */
+
+#loading {
+    /* Positioning */
+    position: fixed;
+    top: 0; bottom: 0;
+    left: 0; right: 0;
+    /* Sizing */
+    height: 100%;
+    /* Background */
+    background-color: #D0D0D0D0;
+}
 
 #loading-spinner {
     /* Alignment */

@@ -1,0 +1,15 @@
+version: "3"
+services:
+    dockervisor:
+        build: sources
+        ports:
+            - 8000:80
+        volumes:
+            # Docker socket volume
+            - /var/run/docker.sock:/var/run/docker.sock
+            # Data volume
+            - dockervisor:/dockervisor
+        privileged: true
+
+volumes:
+    dockervisor:
