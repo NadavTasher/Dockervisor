@@ -57,60 +57,77 @@ const validators = {
 
 export default {
     // Password check endpoint
-    checkPassword: {
+    access: {
         handler: () => { },
         parameters: validators
     },
-    // Deploy key read endpoint
-    deployKey: {
+    // Deployment key endpoint
+    deploymentKey: {
         handler: () => {
-            // Make sure the public key exists
+            // Make sure the file exists
             if (!FileSystem.existsSync(publicKey))
-                throw new Error("Missing deploy key file");
+                throw new Error("Deployment key file missing");
 
             // Read the key file
             return FileSystem.readFileSync(publicKey).toString();
         },
         parameters: validators
     },
-    // Deployment management endpoints
-    checkDeployment: {
-        handler: () => {
-            // Check whether the deployment directory is empty
-            return FileSystem.readdirSync(deployDirectory).length !== 0;
-        },
-        parameters: validators
-    },
-    cloneDeployment: {
-        handler: () => {
-            // Make sure the deploy directory is empty
-            if (FileSystem.readdirSync(deployDirectory).length !== 0)
-                throw new Error("Deployment is already set-up");
-
-            // Clone the repository
-            return execute(`cd ${deployDirectory}; git clone git@github.com:${repository}.git .`);
-        },
-        parameters: validators
-    },
-    pullDeployment: {
+    // Deployment log endpoint
+    deploymentLog: {
         handler: () => {
             // Make sure the deploy directory is not empty
             if (FileSystem.readdirSync(deployDirectory).length === 0)
                 throw new Error("Deployment is not set-up");
 
-            // Clone the repository
+            // Execute a docker-compose log command with no colors in the output
+            return execute(`cd ${deployDirectory}; docker-compose logs --no-color`);
+        },
+        parameters: validators
+    },
+    // Deployment status endpoint
+    deploymentStatus: {
+        handler: () => {
+            // Make sure the deploy directory is not empty
+            if (FileSystem.readdirSync(deployDirectory).length === 0)
+                throw new Error("Deployment is not set-up");
+
+            // Execute a docker-compose ps command with only the container IDs as outputs
+            return execute(`cd ${deployDirectory}; docker-compose ps --quiet`).length === 0 ? "Stopped" : "Running";
+        },
+        parameters: validators
+    },
+    // Deployment setup and update endpoints
+    setupDeployment: {
+        handler: () => {
+            // Make sure the deploy directory is empty
+            if (FileSystem.readdirSync(deployDirectory).length !== 0)
+                throw new Error("Deployment is already set-up");
+
+            // Execute a git clone command to clone the repository
+            return execute(`cd ${deployDirectory}; git clone git@github.com:${repository}.git .`);
+        },
+        parameters: validators
+    },
+    updateDeployment: {
+        handler: () => {
+            // Make sure the deploy directory is not empty
+            if (FileSystem.readdirSync(deployDirectory).length === 0)
+                throw new Error("Deployment is not set-up");
+
+            // Execute a git pull command to update the repository
             return execute(`cd ${deployDirectory}; git pull`);
         },
         parameters: validators
     },
-    // Compose actions
+    // Deployment state changing endpoints
     startDeployment: {
         handler: () => {
             // Make sure the deploy directory is not empty
             if (FileSystem.readdirSync(deployDirectory).length === 0)
                 throw new Error("Deployment is not set-up");
 
-            // Clone the repository
+            // Execute a docker-compose up (start) command to start the services
             return execute(`cd ${deployDirectory}; docker-compose up --build --detach`);
         },
         parameters: validators
@@ -121,7 +138,7 @@ export default {
             if (FileSystem.readdirSync(deployDirectory).length === 0)
                 throw new Error("Deployment is not set-up");
 
-            // Clone the repository
+            // Execute a docker-compose down (stop) command to stop the services
             return execute(`cd ${deployDirectory}; docker-compose down --timeout 10`);
         },
         parameters: validators
@@ -132,29 +149,8 @@ export default {
             if (FileSystem.readdirSync(deployDirectory).length === 0)
                 throw new Error("Deployment is not set-up");
 
-            // Clone the repository
+            // Execute a docker-compose down (stop) command with the volumes parameter to destroy the volumes and the services
             return execute(`cd ${deployDirectory}; docker-compose down --volumes --timeout 5`);
-        },
-        parameters: validators
-    },
-    statusDeployment: {
-        handler: () => {
-            // Generate the status object
-            let status = {
-                log: "No logs",
-                state: "Unknown"
-            };
-
-            // Make sure the deploy directory is not empty
-            if (FileSystem.readdirSync(deployDirectory).length !== 0) {
-                // Read logs
-                status.log = execute(`cd ${deployDirectory}; docker-compose logs --no-color`);
-
-                // Check whether containers are running
-                status.state = execute(`cd ${deployDirectory}; docker-compose ps --quiet`).length === 0 ? "Stopped" : "Running";
-            }
-
-            return status;
         },
         parameters: validators
     }

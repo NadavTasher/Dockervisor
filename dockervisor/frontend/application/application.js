@@ -8,170 +8,136 @@ window.addEventListener("load", async function () {
 
 class Dockervisor {
 
+    /**
+     * API call proxy.
+     * @param {string} action Action
+     * @param {object} parameters Parameters
+     */
+    static call(action) {
+        return API.call("dockervisor", action, {
+            password: localStorage.password
+        });
+    }
+
+    /**
+     * Initializes the application.
+     */
     static initialize() {
-        // Show the loading overlay
-        this.showLoading("Loading application...");
+        // Check the password
+        Dockervisor.call("access").then(
+            () => {
+                // Check deployment setup
+                Dockervisor.call("deploymentStatus").then(
+                    () => {
+                        Dockervisor.dashboard();
+                    }
+                ).catch(
+                    () => {
+                        // Show loading overlay
+                        Dockervisor.showLoading("Preparing setup...");
 
-        // Check whether a password has been saved
-        this.checkPassword(localStorage.password || null);
+                        // Request deploy key
+                        API.call("dockervisor", "deploymentKey", {
+                            password: localStorage.password
+                        }).then(
+                            (deployKey) => {
+                                // Write deploy key to copyable UI element
+                                UI.write("key", deployKey);
+
+                                // Change application page
+                                UI.view("setup");
+
+                                // Hide loading overlay
+                                Dockervisor.hideLoading();
+                            }
+                        ).catch(alert);
+                    }
+                );
+            }
+        ).catch(
+            () => {
+                // Change application page
+                UI.view("access");
+            }
+        );
     }
 
-    static async dashboard() {
+    /**
+     * Updates the dashboard.
+     */
+    static dashboard() {
         // Show the loading overlay
-        this.showLoading("Loading dashboard...");
+        Dockervisor.showLoading("Loading dashboard...");
 
-        // Check deployment status
-        let status = await API.call("dockervisor", "statusDeployment", {
-            password: localStorage.password
-        });
+        // Request deployment status
+        Dockervisor.call("deploymentStatus").then(
+            (status) => {
+                // Write status to UI
+                UI.write("status", status);
 
-        // Change view
+                // Hide loading overlay
+                Dockervisor.hideLoading();
+            }
+        ).catch(alert);
+
+        // Request deployment log
+        Dockervisor.call("deploymentLog").then(
+            (log) => {
+                // Write log to output
+                UI.write("output", log);
+
+                // Hide loading overlay
+                Dockervisor.hideLoading();
+            }
+        ).catch(alert);
+
+        // Change application page
         UI.view("dashboard");
-
-        // Update deployment log
-        UI.write("dashboard-log", status.log);
-
-        // Update deployment state
-        UI.write("dashboard-state", status.state);
-
-        // Hide loading overlay
-        this.hideLoading();
     }
 
-    static async checkPassword(password = UI.read("password-input")) {
+    /**
+     * Executes a deployment action.
+     * @param {string} action Action
+     * @param {string} text Loading text
+     */
+    static button(action, text) {
         // Show loading overlay
-        this.showLoading("Checking password...");
+        Dockervisor.showLoading(text);
 
-        // Check whether the password is correct
-        try {
-            await API.call("dockervisor", "checkPassword", {
-                password: password
-            });
+        // Switch between actions
+        Dockervisor.call(`${action}Deployment`).then(
+            () => {
+                // Refresh dashboard
+                Dockervisor.dashboard();
+            }
+        ).catch(
+            (error) => {
+                // Hide loading overlay
+                Dockervisor.hideLoading();
 
-            // Save password to localStorage
-            localStorage.password = password;
-
-            // Refresh dashboard
-            await this.checkDeployment();
-        } catch (e) {
-            // Change the view
-            UI.view("password");
-
-            // Empty the input
-            UI.write("password-input", String());
-
-            // Hide loading overlay
-            this.hideLoading();
-        }
+                // Show error message
+                alert(error);
+            }
+        );
     }
 
-    static async checkDeployment() {
+    /**
+     * Show the loading overlay.
+     * @param {string} explaination Explaination
+     */
+    static showLoading(explaination = "Loading...") {
         // Show loading overlay
-        this.showLoading("Checking deployment...");
-
-        // Check whether the repository is set-up
-        if (await API.call("dockervisor", "checkDeployment", {
-            password: localStorage.password
-        })) {
-            // Refresh dashboard
-            await this.dashboard();
-        } else {
-            // Show loading overlay
-            this.showLoading("Preparing setup...");
-
-            // Load SSH key
-            let key = await API.call("dockervisor", "deployKey", {
-                password: localStorage.password
-            });
-
-            // Write key to UI
-            UI.write("deploy-key", key);
-
-            // Change view
-            UI.view("deploy");
-
-            // Hide loading overlay
-            this.hideLoading();
-        }
-    }
-
-    static async cloneDeployment() {
-        // Show loading overlay
-        this.showLoading("Cloning deployment...");
-
-        // Request setup completion from server
-        try {
-            await API.call("dockervisor", "cloneDeployment", {
-                password: localStorage.password
-            });
-
-            // Refresh dashboard
-            await this.dashboard();
-        } catch (e) {
-            // Hide loading overlay
-            this.hideLoading();
-        }
-    }
-
-    static async startDeployment() {
-        // Show loading overlay
-        this.showLoading("Starting deployment...");
-
-        await API.call("dockervisor", "startDeployment", {
-            password: localStorage.password
-        });
-
-        // Refresh dashboard
-        await this.dashboard();
-    }
-
-    static async stopDeployment() {
-        // Show loading overlay
-        this.showLoading("Stopping deployment...");
-
-        await API.call("dockervisor", "stopDeployment", {
-            password: localStorage.password
-        });
-
-        // Refresh dashboard
-        await this.dashboard();
-    }
-
-    static async destroyDeployment() {
-        // Show loading overlay
-        this.showLoading("Destroing deployment...");
-
-        await API.call("dockervisor", "destroyDeployment", {
-            password: localStorage.password
-        });
-
-        // Refresh dashboard
-        await this.dashboard();
-    }
-
-    static async updateDeployment() {
-        // Stop deployment
-        await this.stopDeployment();
-
-        // Show loading overlay
-        this.showLoading("Pulling deployment...");
-
-        await API.call("dockervisor", "pullDeployment", {
-            password: localStorage.password
-        });
-
-        // Start deployment
-        await this.startDeployment();
-
-        this.dashboard();
-    }
-
-    static showLoading(text = "Loading...") {
         UI.show("loading");
-        UI.write("loading-text", text);
+
+        // Write explaination to UI
+        UI.write("explaination", explaination);
     }
 
+    /**
+     * Hide the loading overlay.
+     */
     static hideLoading() {
+        // Hide loading overlay
         UI.hide("loading");
     }
 

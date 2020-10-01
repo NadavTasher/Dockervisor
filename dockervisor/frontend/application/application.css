@@ -27,7 +27,7 @@ body {
     background-color: #D0D0D0D0;
 }
 
-#loading-spinner {
+#spinner {
     /* Alignment */
     align-self: center;
     /* Border widths and colors */
@@ -39,10 +39,10 @@ body {
     height: 5vh;
     width: 5vh;
     /* Animation */
-    animation: loading-spinner-animation 1s linear infinite;
+    animation: animation 1s linear infinite;
 }
 
-@keyframes loading-spinner-animation {
+@keyframes animation {
     0% {
         transform: rotate(0deg);
     }

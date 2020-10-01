@@ -61,49 +61,51 @@
                   <p large left>Dockervisor: Dashboard</p>
                   <!-- Deployment status -->
                   <p tiny left>Deployment status:</p>
-                  <p small center id="dashboard-state">Loading...</p>
-                  <textarea button tiny left id="dashboard-log" style="height: 25vh;" readonly>Loading...</textarea>
+                  <p small center id="status">Loading...</p>
+                  <!-- Deployment log -->
+                  <p tiny left>Deployment log:</p>
+                  <textarea button tiny left id="output" style="height: 25vh;" readonly>Loading...</textarea>
                   <!-- Buttons -->
                   <p tiny left>Execute actions:</p>
                   <div row>
-                        <button small center onclick="Dockervisor.startDeployment();">Start</button>
-                        <button small center onclick="Dockervisor.stopDeployment();">Stop</button>
+                        <button small center onclick="Dockervisor.button('start', 'Starting deployment...');">Start</button>
+                        <button small center onclick="Dockervisor.button('stop', 'Stopping deployment...');">Stop</button>
                   </div>
                   <div row>
-                        <button small center onclick="Dockervisor.updateDeployment();">Update</button>
-                        <button small center onclick="Dockervisor.destroyDeployment();">Destroy</button>
+                        <button small center onclick="Dockervisor.button('update', 'Updating deployment...');">Update</button>
+                        <button small center onclick="Dockervisor.button('destroy', 'Destroying deployment...');">Destroy</button>
                   </div>
                   <!-- Refresh countdown -->
                   <p tiny right onclick="Dockervisor.dashboard();">Refresh</p>
             </div>
             <!-- Password page -->
-            <div id="password" hidden>
+            <div id="access" hidden>
                   <!-- Title -->
-                  <p large left>Dockervisor: Password</p>
+                  <p large left>Dockervisor: Access</p>
                   <!-- Description -->
                   <p tiny left>Please provide the password you selected when you deployed Dockervisor.</p>
                   <!-- Inputs -->
-                  <input left small id="password-input" type="password" placeholder="Password" />
+                  <input left small id="password" type="password" placeholder="Password" />
                   <!-- Continue button -->
-                  <button small right onclick="Dockervisor.checkPassword();">Continue</button>
+                  <button small right onclick="localStorage.password = UI.read('password'); location.reload();">Continue</button>
             </div>
             <!-- Setup page -->
-            <div id="deploy" hidden>
+            <div id="setup" hidden>
                   <!-- Title -->
                   <p large left>Dockervisor: Setup</p>
-                  <!-- Description -->
-                  <p tiny left>Please follow the instructions to complete the setup.</p>
                   <!-- SSH deploy key -->
                   <p tiny left>Add this SSH key as a new deploy key in your GitHub repository.</p>
-                  <textarea button tiny left id="deploy-key" style="height: 15vh;" readonly></textarea>
+                  <textarea button tiny left id="key" style="height: 15vh;" readonly></textarea>
                   <!-- Continue button -->
-                  <button small right onclick="Dockervisor.cloneDeployment();">Continue</button>
+                  <button small right onclick="Dockervisor.button('setup', 'Setting up deployment...');">Continue</button>
             </div>
       </div>
       <!-- Loading page -->
       <div id="loading">
-            <div id="loading-spinner"></div>
-            <p medium center id="loading-text">Loading...</p>
+            <!-- Loading spinner -->
+            <div id="spinner"></div>
+            <!-- Loading explaination text -->
+            <p medium center id="explaination">Loading...</p>
       </div>
 </body>
 
