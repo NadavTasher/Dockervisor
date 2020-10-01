@@ -59,6 +59,9 @@ class Dockervisor {
             () => {
                 // Change application page
                 UI.view("access");
+                
+                // Hide loading overlay
+                Dockervisor.hideLoading();
             }
         );
     }
