@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!--
+ Copyright (c) 2020 Nadav Tasher
+ https://github.com/NadavTasher/Template/
+-->
+<html row lang="en">
+
+<head>
+      <!-- Charset -->
+      <meta charset="UTF-8" />
+
+      <!-- App Description -->
+      <meta name="description" content="Dockervisor - Easily manage your deployment">
+
+      <!-- Viewport -->
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, minimal-ui" />
+
+      <!-- Mobile -->
+      <meta name="theme-color" content="#FFFFFF" />
+      <meta name="mobile-web-app-capable" content="yes">
+
+      <!-- Mobile Safari -->
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-title" content="Dockervisor" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+      <!-- Icons -->
+      <link rel="icon"
+            href="data:image/png;base64,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" />
+      <link rel="apple-touch-icon"
+            href="data:image/png;base64,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" />
+
+      <!-- Repositories -->
+      <meta name="repository-internal" content="modules/internal" />
+      <meta name="repository-external" content="modules/external" />
+
+      <!-- Stylesheets -->
+      <link rel="stylesheet" href="template/template.css" />
+      <link rel="stylesheet" href="application/application.css" />
+
+      <!-- Scripts  -->
+      <script type="text/javascript" src="template/template.js"></script>
+      <script type="text/javascript" src="application/application.js"></script>
+
+      <!-- App Title -->
+      <title>Dockervisor</title>
+
+      <!-- No Script -->
+      <noscript></noscript>
+
+      <!-- Additional -->
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500" />
+</head>
+
+<body column>
+      <!-- Loading page -->
+      <div id="loading">
+            <div id="loading-spinner"></div>
+            <p medium center id="loading-text">Loading...</p>
+      </div>
+      <!-- Home page -->
+      <div id="home" hidden>
+
+      </div>
+      <!-- Setup page -->
+      <div id="setup" hidden>
+            <p large left>Dockervisor: Setup</p>
+            <p tiny left>Please provide the required information to complete the setup.</p>
+
+      </div>
+</body>
+
+</html>

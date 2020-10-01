@@ -1,0 +1,14 @@
+{
+  "version": "3",
+  "services": {
+    "dockervisor": {
+      "build": "dockervisor",
+      "ports": [
+        "8000:80"
+      ],
+      "environment": [
+        "password=Hello"
+      ]
+    }
+  }
+}

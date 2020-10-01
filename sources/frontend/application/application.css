@@ -1,0 +1,41 @@
+:root {
+    --theme: #FFFFFF;
+    --passive: #333344;
+    --active: #777788;
+    --coaster: #DDDDEE;
+}
+
+body {
+    max-width: 500px;
+}
+
+* {
+    /* Font */
+    font-family: "Source Code Pro", monospace !important;
+}
+
+/* Loading spinner */
+
+#loading-spinner {
+    /* Alignment */
+    align-self: center;
+    /* Border widths and colors */
+    border: 1vh solid transparent;
+    border-top: 1vh solid var(--passive);
+    /* Border radius */
+    border-radius: 50%;
+    /* Size */
+    height: 5vh;
+    width: 5vh;
+    /* Animation */
+    animation: loading-spinner-animation 1s linear infinite;
+}
+
+@keyframes loading-spinner-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
