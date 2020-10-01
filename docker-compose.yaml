@@ -9,6 +9,8 @@ services:
             - /var/run/docker.sock:/var/run/docker.sock
             # Data volume
             - dockervisor:/dockervisor
+        environment: 
+            - REPOSITORY=NadavTasher/Dockervisor-Test
         privileged: true
 
 volumes:

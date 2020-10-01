@@ -10,21 +10,10 @@ import Server from "./internal/server/server.mjs";
 let server = new Server(8000);
 
 // Import dockervisor
-import Dockervisor from "./external/dockervisor.mjs";
-
-// Initialize password parameter
-let password = process.env.password;
-
-// Make sure the password is defined
-if (password === undefined) {
-    // Set default password
-    password = "Dockervisor2020";
-    // Warn user for default password
-    console.warn("No password in environment - Using default password!");
-}
+import route from "./external/dockervisor.mjs";
 
 // Enable the routes
-server.insert("dockervisor", Dockervisor.initialize(password));
+server.insert("dockervisor", route);
 
 // Listen for requests
 server.listen();

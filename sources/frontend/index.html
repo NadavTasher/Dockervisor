@@ -61,19 +61,20 @@
                   <p large left>Dockervisor: Dashboard</p>
                   <!-- Deployment status -->
                   <p tiny left>Deployment status:</p>
-                  <p small center id="dashboard-status">Loading...</p>
+                  <p small center id="dashboard-state">Loading...</p>
+                  <textarea button tiny left id="dashboard-log" style="height: 25vh;" readonly>Loading...</textarea>
                   <!-- Buttons -->
                   <p tiny left>Execute actions:</p>
                   <div row>
-                        <button>Up</button>
-                        <button>Down</button>
+                        <button small center onclick="Dockervisor.startDeployment();">Start</button>
+                        <button small center onclick="Dockervisor.stopDeployment();">Stop</button>
                   </div>
                   <div row>
-                        <button>Update</button>
-                        <button>Restart</button>
+                        <button small center onclick="Dockervisor.updateDeployment();">Update</button>
+                        <button small center onclick="Dockervisor.destroyDeployment();">Destroy</button>
                   </div>
                   <!-- Refresh countdown -->
-                  <p tiny right id="dashboard-countdown">Loading...</p>
+                  <p tiny right onclick="Dockervisor.dashboard();">Refresh</p>
             </div>
             <!-- Password page -->
             <div id="password" hidden>
@@ -87,22 +88,16 @@
                   <button small right onclick="Dockervisor.checkPassword();">Continue</button>
             </div>
             <!-- Setup page -->
-            <div id="setup" hidden>
+            <div id="deploy" hidden>
                   <!-- Title -->
                   <p large left>Dockervisor: Setup</p>
                   <!-- Description -->
                   <p tiny left>Please follow the instructions to complete the setup.</p>
                   <!-- SSH deploy key -->
                   <p tiny left>Add this SSH key as a new deploy key in your GitHub repository.</p>
-                  <textarea button tiny left id="setup-key" style="height: 15vh;" readonly></textarea>
-                  <!-- GitHub repository name -->
-                  <p tiny left>Please provide your GitHub repository name.</p>
-                  <div row>
-                        <input small center id="setup-user" placeholder="GitHub User" />
-                        <input small center id="setup-name" placeholder="Repository Name" />
-                  </div>
+                  <textarea button tiny left id="deploy-key" style="height: 15vh;" readonly></textarea>
                   <!-- Continue button -->
-                  <button small right onclick="Dockervisor.repositorySetup();">Continue</button>
+                  <button small right onclick="Dockervisor.cloneDeployment();">Continue</button>
             </div>
       </div>
       <!-- Loading page -->
