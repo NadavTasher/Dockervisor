@@ -73,7 +73,7 @@
                   </div>
                   <div row>
                         <button small center onclick="Dockervisor.button('update', 'Updating deployment...');">Update</button>
-                        <button small center onclick="Dockervisor.button('destroy', 'Destroying deployment...');">Destroy</button>
+                        <button small center onclick="prompt('Are you sure you want to destroy all services?', 'No').toLowerCase() === 'yes' && Dockervisor.button('destroy', 'Destroying deployment...');">Destroy</button>
                   </div>
                   <!-- Refresh countdown -->
                   <p tiny right onclick="Dockervisor.dashboard();">Refresh</p>
