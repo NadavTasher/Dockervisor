@@ -80,7 +80,7 @@ class Dockervisor {
             this.showLoading("Preparing setup...");
 
             // Load SSH key
-            let key = API.call("dockervisor", "deployKey", {
+            let key = await API.call("dockervisor", "deployKey", {
                 password: localStorage.password
             });
 
