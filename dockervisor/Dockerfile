@@ -2,8 +2,8 @@
 FROM nadavtasher/template:2020.10.02
 
 # Install docker-compose and git
-RUN apt-get update
-RUN apt-get -y install --no-install-recommends --no-install-suggests docker-compose git ssh
+RUN apt update
+RUN apt --yes --no-install-recommends --no-install-suggests install docker-compose git ssh
 
 # Copy SSH configuration
 COPY patches/ssh /etc/ssh/ssh_config
