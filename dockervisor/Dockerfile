@@ -1,5 +1,5 @@
 # Select the base image
-FROM nadavtasher/base
+FROM nadavtasher/template:2020.10.02
 
 # Install docker-compose and git
 RUN apt-get update
@@ -14,6 +14,3 @@ RUN mkdir /dockervisor
 # Copy sources
 COPY backend backend
 COPY frontend frontend
-
-# Set command
-CMD ["application.mjs"]

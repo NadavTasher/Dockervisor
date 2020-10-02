@@ -1,4 +1,4 @@
-name: Build and push multi-arch images
+name: Build multi-arch images
 
 on:
   pull_request:
@@ -7,23 +7,24 @@ on:
     branches: master
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Code setup
         uses: actions/checkout@v2
 
-      - name: Set up multi-arch builds
-        id: buildx
+      - name: Buildx setup
         uses: crazy-max/ghaction-docker-buildx@v2
         with:
           buildx-version: latest
           skip-cache: false
           qemu-version: latest
 
-      - name: Login to hub
-        run: echo "${{ secrets.TOKEN }}" | docker login -u "${{ secrets.NAME }}" --password-stdin
+      - name: Build images
+        run: docker buildx build --platform linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x . --tag image
 
-      - name: Build and push
-        run: |
-          docker buildx build --platform linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x -t nadavtasher/dockervisor:latest dockervisor --push
+      - name: Login to dockerhub
+        run: echo "${{ secrets.TOKEN }}" | docker login --username "${{ secrets.NAME }}" --password-stdin
+
+      - name: Push images as latest
+        run: docker buildx build --platform linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x . --tag nadavtasher/dockervisor:latest --push
