@@ -13,8 +13,7 @@
       "environment": [
         "PASSWORD=Dockervisor",
         "REPOSITORY=NadavTasher/Dockervisor-Test"
-      ],
-      "privileged": true
+      ]
     }
   },
   "volumes": {

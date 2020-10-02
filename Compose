@@ -15,7 +15,7 @@ services:
             - PASSWORD=Dockervisor
             # Dockervisor repository
             - REPOSITORY=NadavTasher/Dockervisor
-        privileged: true
+        restart: unless-stopped
 
 volumes:
     dockervisor:
