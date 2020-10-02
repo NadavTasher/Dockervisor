@@ -21,10 +21,10 @@ jobs:
           qemu-version: latest
 
       - name: Build images
-        run: docker buildx build --platform linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x . --tag image
+        run: docker buildx build --platform linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x dockervisor --tag image
 
       - name: Login to dockerhub
         run: echo "${{ secrets.TOKEN }}" | docker login --username "${{ secrets.NAME }}" --password-stdin
 
       - name: Push images as latest
-        run: docker buildx build --platform linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x . --tag nadavtasher/dockervisor:latest --push
+        run: docker buildx build --platform linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x dockervisor --tag nadavtasher/dockervisor:latest --push
