@@ -26,5 +26,8 @@ jobs:
       - name: Login to dockerhub
         run: echo "${{ secrets.TOKEN }}" | docker login --username "${{ secrets.NAME }}" --password-stdin
 
+      - name: Push images as date
+        run: docker buildx build --platform linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x dockervisor --tag nadavtasher/dockervisor:$(date +%Y.%m.%d) --push
+
       - name: Push images as latest
         run: docker buildx build --platform linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x dockervisor --tag nadavtasher/dockervisor:latest --push
