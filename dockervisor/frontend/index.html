@@ -227,17 +227,16 @@
         <p tiny left>Deployment log:</p>
         <textarea button tiny left id="output" style="height: 25vh;" readonly>Loading...</textarea>
         <!-- Buttons -->
-        <p tiny left>Execute actions:</p>
         <div row stretch>
             <button small center onclick="Dockervisor.button('start', 'Starting deployment...');">Start</button>
             <button small center onclick="Dockervisor.button('stop', 'Stopping deployment...');">Stop</button>
         </div>
         <div row stretch>
             <button small center onclick="Dockervisor.button('update', 'Updating deployment...');">Update</button>
-            <button small center onclick="prompt('Are you sure you want to destroy all services?', 'No').toLowerCase() === 'yes' && Dockervisor.button('destroy', 'Destroying deployment...');">Destroy</button>
+            <button small center onclick="Dialog.confirm('Are you sure you want to destroy all services?').then(() => Dockervisor.button('destroy', 'Destroying deployment...'));">Destroy</button>
         </div>
         <!-- Refresh countdown -->
-        <p tiny right onclick="Dockervisor.dashboard();">Refresh</p>
+        <button small center onclick="Dockervisor.dashboard();">Refresh</button>
     </div>
     <!-- Password page -->
     <div id="access" hidden>
@@ -248,7 +247,7 @@
         <!-- Inputs -->
         <input left small id="password" type="password" placeholder="Password" />
         <!-- Continue button -->
-        <button small right onclick="localStorage.password = UI.read('password'); location.reload();">Continue</button>
+        <button small center onclick="localStorage.password = UI.read('password'); location.reload();">Continue</button>
     </div>
     <!-- Setup page -->
     <div id="setup" hidden>
@@ -258,7 +257,7 @@
         <p tiny left>Add this SSH key as a new deploy key in your GitHub repository.</p>
         <textarea button tiny left id="key" style="height: 15vh;" readonly></textarea>
         <!-- Continue button -->
-        <button small right onclick="Dockervisor.button('setup', 'Setting up deployment...');">Continue</button>
+        <button small center onclick="Dockervisor.button('setup', 'Setting up deployment...');">Continue</button>
     </div>
 </body>
 
