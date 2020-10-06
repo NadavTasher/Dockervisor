@@ -4,16 +4,16 @@
  **/
 
 // Import internal parts
-import Server from "./internal/server/server.mjs";
+import { Server } from "./internal/server/server.mjs";
 
 // Create the server
-let server = new Server(8000);
+let mServer = new Server(8000);
 
 // Import dockervisor
 import route from "./external/dockervisor.mjs";
 
 // Enable the routes
-server.insert("dockervisor", route);
+mServer.insert("dockervisor", route);
 
 // Listen for requests
-server.listen();
+mServer.listen();
