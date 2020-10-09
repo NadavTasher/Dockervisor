@@ -63,7 +63,7 @@
     <script type="text/javascript">
         window.addEventListener("load", async function () {
             // Import modules
-            await Module.import("API", "UI", "External:Toast", "External:Dialog");
+            await Module.import("API", "UI", "External:Snack", "External:Dialog");
 
             // Initialize the application
             Dockervisor.initialize();
@@ -87,17 +87,17 @@
              */
             static initialize() {
                 // Check the password
-                Toast.loading("Checking password...", Dockervisor.call("access")).then(
+                Snack.progress("Checking password...", Dockervisor.call("access")).then(
                     () => {
                         // Check deployment setup
-                        Toast.loading("Checking deployment...", Dockervisor.call("deploymentExists")).then(
+                        Snack.progress("Checking deployment...", Dockervisor.call("deploymentExists")).then(
                             (exists) => {
                                 if (exists) {
                                     // Refresh dashboard
                                     Dockervisor.dashboard();
                                 } else {
                                     // Request deploy key
-                                    Toast.loading("Loading deployment key...", Dockervisor.call("deploymentKey")).then(
+                                    Snack.progress("Loading deployment key...", Dockervisor.call("deploymentKey")).then(
                                         (deployKey) => {
                                             // Write deploy key to copyable UI element
                                             UI.write("key", deployKey);
@@ -105,10 +105,10 @@
                                             // Change application page
                                             UI.view("setup");
                                         }
-                                    ).catch(Toast.toast);
+                                    ).catch(Snack.timeout);
                                 }
                             }
-                        ).catch(Toast.toast);
+                        ).catch(Snack.timeout);
                     }
                 ).catch(
                     (reason) => {
@@ -116,7 +116,7 @@
                         UI.view("access");
 
                         // Toast with error
-                        Toast.toast(reason);
+                        Snack.timeout(reason);
                     }
                 );
             }
@@ -126,20 +126,20 @@
              */
             static dashboard() {
                 // Request deployment status
-                Toast.loading("Loading deployment status...", Dockervisor.call("deploymentStatus")).then(
+                Snack.progress("Loading deployment status...", Dockervisor.call("deploymentStatus")).then(
                     (status) => {
                         // Write status to UI
                         UI.write("status", status);
                     }
-                ).catch(Toast.toast);
+                ).catch(Snack.timeout);
 
                 // Request deployment log
-                Toast.loading("Loading deployment log...", Dockervisor.call("deploymentLog")).then(
+                Snack.progress("Loading deployment log...", Dockervisor.call("deploymentLog")).then(
                     (log) => {
                         // Write log to output
                         UI.write("output", log);
                     }
-                ).catch(Toast.toast);
+                ).catch(Snack.timeout);
 
                 // Change application page
                 UI.view("dashboard");
@@ -152,12 +152,12 @@
              */
             static button(action, text) {
                 // Switch between actions
-                Toast.loading(text, Dockervisor.call(`${action}Deployment`)).then(
+                Snack.progress(text, Dockervisor.call(`${action}Deployment`)).then(
                     () => {
                         // Refresh dashboard
                         Dockervisor.dashboard();
                     }
-                ).catch(Toast.toast);
+                ).catch(Snack.timeout);
             }
         }
     </script>
