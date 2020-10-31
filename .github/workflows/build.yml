@@ -1,33 +1,58 @@
-name: Build multi-arch images
+name: Build and push multi-arch images
 
 on:
-  pull_request:
-    branches: master
-  push:
-    branches: master
+    push:
+        branches: master
 
 jobs:
-  Build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Code setup
-        uses: actions/checkout@v2
+    Build:
+        runs-on: ubuntu-latest
+        steps:
+            -
+                name: Code setup
+                uses: actions/checkout@v2
 
-      - name: Buildx setup
-        uses: crazy-max/ghaction-docker-buildx@v2
-        with:
-          buildx-version: latest
-          skip-cache: false
-          qemu-version: latest
+            -
+                name: QEMU setup
+                uses: docker/setup-qemu-action@v1
 
-      - name: Build images
-        run: docker buildx build --platform linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x dockervisor --tag image
+            -
+                name: Buildx setup
+                uses: docker/setup-buildx-action@v1
 
-      - name: Login to dockerhub
-        run: echo "${{ secrets.TOKEN }}" | docker login --username "${{ secrets.NAME }}" --password-stdin
+            -
+                name: DockerHub setup
+                uses: docker/login-action@v1 
 
-      - name: Push images as date
-        run: docker buildx build --platform linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x dockervisor --tag dockervisor/dockervisor:$(date +%Y.%m.%d) --push
+                with:
+                    # What is our username?
+                    username: ${{ secrets.NAME }}
+                    
+                    # What is our password?
+                    password: ${{ secrets.TOKEN }}
 
-      - name: Push images as latest
-        run: docker buildx build --platform linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x dockervisor --tag dockervisor/dockervisor:latest --push
+            - 
+                name: Tags setup
+                run: |
+                    echo "DATE=$(date +%Y.%m.%d)" >> $GITHUB_ENV
+                    echo "LATEST=latest" >> $GITHUB_ENV
+
+            -
+                name: Build and push
+                uses: docker/build-push-action@v2
+
+                with:
+                    # Do we want to push the images to DockerHub?
+                    push: true
+
+                    # What is out build context?
+                    file: dockervisor/Dockerfile
+                    context: dockervisor
+
+                    # What are our target platforms?
+                    platforms: linux/amd64,linux/arm64/v8,linux/arm/v7,linux/ppc64le,linux/s390x
+
+                    # What are our version tags?
+                    tags: |
+                        dockervisor/dockervisor:${{ env.DATE }}
+                        dockervisor/dockervisor:${{ env.LATEST }}
