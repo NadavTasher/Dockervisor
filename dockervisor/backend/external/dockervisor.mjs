@@ -113,8 +113,8 @@ export default {
             if (FileSystem.readdirSync(deploy).length !== 0)
                 throw new Error("Deployment is already set-up");
 
-            // Execute a git clone command to clone the repository
-            return execute(`cd ${deploy}; git clone git@github.com:${repository}.git .`);
+            // Execute a git clone command to clone the repository, then build the services with docker-compose
+            return execute(`cd ${deploy}; git clone git@github.com:${repository}.git .; docker-compose build`);
         },
         parameters: validators
     },
@@ -124,8 +124,8 @@ export default {
             if (FileSystem.readdirSync(deploy).length === 0)
                 throw new Error("Deployment is not set-up");
 
-            // Execute a git pull command to update the repository
-            return execute(`cd ${deploy}; git pull`);
+            // Execute a git pull command to update the repository, then execute a docker-compose build command to build the services
+            return execute(`cd ${deploy}; git pull; docker-compose build`);
         },
         parameters: validators
     },
@@ -137,7 +137,7 @@ export default {
                 throw new Error("Deployment is not set-up");
 
             // Execute a docker-compose up (start) command to start the services
-            return execute(`cd ${deploy}; docker-compose up --build --detach`);
+            return execute(`cd ${deploy}; docker-compose up --detach`);
         },
         parameters: validators
     },
