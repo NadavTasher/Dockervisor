@@ -52,11 +52,6 @@
         body {
             max-width: 500px;
         }
-
-        * {
-            /* Font */
-            font-family: "Source Code Pro", monospace !important;
-        }
     </style>
 
     <!-- Application script -->
@@ -136,8 +131,14 @@
                 // Request deployment log
                 Snack.progress("Loading deployment log...", Dockervisor.call("deploymentLog")).then(
                     (log) => {
+                        // Find output element
+                        let output = UI.find("output");
+
                         // Write log to output
-                        UI.write("output", log);
+                        UI.write(output, log);
+
+                        // Scroll to bottom
+                        output.scrollTop = output.scrollHeight;
                     }
                 ).catch(Snack.timeout);
 

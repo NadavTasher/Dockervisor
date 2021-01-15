@@ -1,5 +1,5 @@
 # Select the base image
-FROM nadavtasher/template:2020.11.07
+FROM nadavtasher/template:2021.01.15
 
 # Install docker-compose and git
 RUN apt update
