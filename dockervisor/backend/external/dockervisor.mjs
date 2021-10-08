@@ -120,7 +120,7 @@ export default {
                     throw new Error("Deployment is not set-up");
 
                 // Execute a git pull command to update the repository, then execute a docker-compose build command to build the services
-                return execute(`cd ${deploy}; git pull; docker-compose build`);
+                return execute(`cd ${deploy}; git pull --recurse-submodules; docker-compose build`);
             },
             parameters: validators
         },
