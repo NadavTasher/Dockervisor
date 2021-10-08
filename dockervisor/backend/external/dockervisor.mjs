@@ -109,7 +109,7 @@ export default {
                     throw new Error("Deployment is already set-up");
 
                 // Execute a git clone command to clone the repository, then build the services with docker-compose
-                return execute(`cd ${deploy}; git clone git@github.com:${repository}.git .; docker-compose build`);
+                return execute(`cd ${deploy}; git clone git@github.com:${repository}.git . --recurse-submodules; docker-compose build`);
             },
             parameters: validators
         },
