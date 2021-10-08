@@ -43,10 +43,10 @@
     <!-- Application stylesheet -->
     <style>
         :root {
+            --text: #707070;
             --theme: #D0D0D0;
-            --passive: #333344;
-            --active: #777788;
-            --coaster: #FFFFFF;
+            --active: #cccccc;
+            --passive: #dddddd;
         }
 
         body {
@@ -62,7 +62,7 @@
     <script type="text/javascript">
         window.addEventListener("load", async function () {
             // Import modules
-            await Module.import("API", "UI", "External:Snack", "External:Dialog");
+            await Module.load("API", "UI", "GUI");
 
             // Initialize the application
             Dockervisor.initialize();
@@ -86,17 +86,17 @@
              */
             static initialize() {
                 // Check the password
-                Snack.progress("Checking password...", Dockervisor.call("access")).then(
+                Progress.drawer("Checking password...", Dockervisor.call("access")).then(
                     () => {
                         // Check deployment setup
-                        Snack.progress("Checking deployment...", Dockervisor.call("deploymentExists")).then(
+                        Progress.drawer("Checking deployment...", Dockervisor.call("deploymentExists")).then(
                             (exists) => {
                                 if (exists) {
                                     // Refresh dashboard
                                     Dockervisor.dashboard();
                                 } else {
                                     // Request deploy key
-                                    Snack.progress("Loading deployment key...", Dockervisor.call("deploymentKey")).then(
+                                    Progress.drawer("Loading deployment key...", Dockervisor.call("deploymentKey")).then(
                                         (deployKey) => {
                                             // Write deploy key to copyable UI element
                                             UI.write("key", deployKey);
@@ -104,10 +104,10 @@
                                             // Change application page
                                             UI.view("setup");
                                         }
-                                    ).catch(Snack.timeout);
+                                    ).catch(Alert.drawer);
                                 }
                             }
-                        ).catch(Snack.timeout);
+                        ).catch(Alert.drawer);
                     }
                 ).catch(
                     (reason) => {
@@ -115,7 +115,7 @@
                         UI.view("access");
 
                         // Toast with error
-                        Snack.timeout(reason);
+                        Alert.drawer(reason);
                     }
                 );
             }
@@ -124,16 +124,19 @@
              * Updates the dashboard.
              */
             static dashboard() {
+                // Change application page
+                UI.view("dashboard");
+
                 // Request deployment status
-                Snack.progress("Loading deployment status...", Dockervisor.call("deploymentStatus")).then(
+                Progress.drawer("Loading deployment status...", Dockervisor.call("deploymentStatus")).then(
                     (status) => {
                         // Write status to UI
                         UI.write("status", status);
                     }
-                ).catch(Snack.timeout);
+                ).catch(Alert.drawer);
 
                 // Request deployment log
-                Snack.progress("Loading deployment log...", Dockervisor.call("deploymentLog")).then(
+                Progress.drawer("Loading deployment log...", Dockervisor.call("deploymentLog")).then(
                     (log) => {
                         // Find output element
                         let output = UI.find("output");
@@ -144,10 +147,7 @@
                         // Scroll to bottom
                         output.scrollTop = output.scrollHeight;
                     }
-                ).catch(Snack.timeout);
-
-                // Change application page
-                UI.view("dashboard");
+                ).catch(Alert.drawer);
             }
 
             /**
@@ -157,12 +157,12 @@
              */
             static button(action, text) {
                 // Switch between actions
-                Snack.progress(text, Dockervisor.call(`${action}Deployment`)).then(
+                Progress.drawer(text, Dockervisor.call(`${action}Deployment`)).then(
                     () => {
                         // Refresh dashboard
                         Dockervisor.dashboard();
                     }
-                ).catch(Snack.timeout);
+                ).catch(Alert.drawer);
             }
         }
     </script>
@@ -201,7 +201,7 @@
         </div>
         <div row stretch>
             <button small center onclick="Dockervisor.button('update', 'Updating deployment...');">Update</button>
-            <button small center onclick="Dialog.confirm('Are you sure you want to destroy all services?').then(() => Dockervisor.button('destroy', 'Destroying deployment...'));">Destroy</button>
+            <button small center onclick="Prompt.dialog('Are you sure you want to destroy all services?', 'Yes').then((response) => { if (response == 'Yes') Dockervisor.button('destroy', 'Destroying deployment...'); });">Destroy</button>
         </div>
         <!-- Refresh countdown -->
         <button small center onclick="Dockervisor.dashboard();">Refresh</button>
